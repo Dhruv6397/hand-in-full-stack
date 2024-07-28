@@ -1,122 +1,93 @@
-const http = require('http')
+const express = require('express')
+const app = express()
+const cors = require('cors')
 const path = require('path')
-const fs = require('fs')
-const fsPromises = require('fs').promises;
-const logEvents = require('./logEvents')
-const EventEmitter = require('events')
-
-class Emitter extends EventEmitter{};
-//initialize object
-const myEmitter = new Emitter()
-myEmitter.on('log',(msg,fileName)=>logEvents(msg,fileName))
+const {logger,logEvents} = require('./middleware/logEvents')
 const PORT = process.env.PORT || 3500
 
-const serveFile = async (filePath,contentType,response)=>{
-    try{
-        const rawData = await fsPromises.readFile(
-            filePath,
-            !contentType.includes('image')?'utf8':'')
-        const data =contentType === 'application/json'
-        ? JSON.parse(rawData):rawData
-        response.writeHead(
-            filePath.includes('404.html')?404:200,
-            {'Content-Type':contentType});
-        response.end(
-            contentType === 'application/json' ? JSON.stringify(data):data
-        )
+//custom middleware
+// app.use((req,res,next)=>{
+//     logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`,'reqLog.txt')
+//     console.log(`${req.method} ${req.path}`)
+//     next()
+// })
+//above code work same as logger
+app.use(logger)
 
-    }catch(err){
-        console.log(err)
-        myEmitter.emit('log',`${err.name}:${req.msg}`,'reqLog.txt')
-        response.statusCode =500;
-        response.end();
-    }
+
+//cors origin resource sharing
+const whitelist = ['https://www.google.com','http://127.0.0.1:500']
+const corsOptions ={
+    origin:(origin,callback)=>{
+        if(whitelist.indexOf(origin)!==-1){
+            callback(null,true)
+        }else{
+            callback(new Error('not allowed by Cors'))
+        }
+    },
+    optionSuccessStatus:200
 }
-const server = http.createServer((req,res)=>{
-    console.log(req.url , req.method)
-    myEmitter.emit('log',`${req.url}\t${req.method}`,'reqLog.txt')
-   const extension = path.extname(req.url);
-   let contentType;
-    switch(extension){
-        case '.css':
-            contentType ='text/css';
-            break;
-        case '.js':
-            contentType="text/javascript";
-            break;
-        case '.json':
-            contentType="application/json";
-            break;
-        case '.jpg':
-            contentType="image/jpeg";
-            break;
-        case '.png':
-            contentType="image/png";
-            break;
-        case '.txt':
-            contentType="text/plain";
-            break;
-        default:
-            contentType="text/html";
+app.use(cors(corsOptions))
 
-    }
+//built in middle ware to handle urlencoded data
+//in other words , form data
+//'content-type : application/x-www-form-urlencoded
+app.use(express.urlencoded({extended:false}))
+//built-in middleware for json
+app.use(express.json())
+//serve static files
+app.use(express.static(path.join(__dirname,'/public')))
 
 
-    let filePath = contentType === 'text/html' && req.url==='/'
-    ?path.join(__dirname,'views','index.html')
-    :contentType ==='text/html' && req.url.slice(-1)==='/'
-    ?path.json(__dirname,'views',req.url,'index.html')
-    :contentType === 'text/html'
-    ?path.join(__dirname,'views',req.url)
-    :path.join(__dirname,req.url)
+app.get('^/$|index(.html)?',(req,res)=>{
+    //res.sendFile('./views/index.html',{root : __dirname})
+    res.sendFile(path.join(__dirname,'views','index.html'))
 
-//makes .html extension not required in the browser
-    if(!extension && req.url.slice(-1)!=='/') filePath += '.html';
+})
+app.get('/new-page(.html)?',(req,res)=>{
+    //res.sendFile('./views/index.html',{root : __dirname})
+    res.sendFile(path.join(__dirname,'views','new-page.html'))
 
-    const fileExists = fs.existsSync(filePath)
-    if(fileExists){
-        //server the file
-        serveFile(filePath,contentType,res)
-    }else{
-        switch(path.parse(filePath).base){
-            case 'old-page.html':
-                res.writeHead(301,{'Location':'/new-page.html'});
-                res.end();
-                break;
-            case 'www-page.html':
-                res.writeHead(301,{'Location':'/'});
-                res.end();
-                break;
-            default:
-                //serve a 404 response
-                serveFile(path.join(__dirname,'views','404.html'),'text/html',res)
+})
+app.get('/old-page(.html)?',(req,res)=>{
+    //res.sendFile('./views/index.html',{root : __dirname})
+    res.redirect(302,'/new-page.html')//302 by default
+
+})
 
 
-        }//
-    }
+//route handlers
+// function chain
+app.get('/hello(.html)?',(req,res,next)=>{
+    console.log("attempted to load hello.html")
+    next()
+},(req,res)=>{
+    res.send('hello world')
+})
 
 
+//chaining route handler
 
-    // switch(req.url ){
-    //     case '/':
-    //     res.statusCode = 200;
-    //     res.setHeader('Content-Type','text/html');
-    //     path = path.join(__dirname,'views','index.html')
-    //     fs.readFile(path,'utf8',(err,data)=>{
-    //         res.end(data)
-    //     })
-    //     break;
-    // } 
-});
+const one =(req,res,next)=>{
+    
+console.log("one")
+next()
+}
 
-server.listen(PORT,()=>console.log(`server running on ${PORT}`))
+const two =(req,res,next)=>{
+    
+console.log("two")
+next()
+}
 
+const three =(req,res,next)=>{
+console.log("three")
+res.send("finished")
+}
+app.get('/chain(.html)?',[one,two,three])
 
-//add listener for the log event
-// myEmitter.on('log',(msg)=>logEvents(msg))
-
-// setTimeout(()=>{
-//     //emit event
-//     myEmitter.emit('log','log event emitted')
-// },2000)
-
+app.get('/*',(req,res)=>{
+    res.status(404).sendFile(path.join(__dirname,'views','404.html'
+    ))
+})
+app.listen(PORT,()=>console.log(`server running on ${PORT}`))

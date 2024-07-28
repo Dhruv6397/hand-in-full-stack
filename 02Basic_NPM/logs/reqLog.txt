@@ -1,6 +1,18 @@
-2024-07-22	15:23:37	782cac0b-0518-4e1f-a35a-b76344c6eb25	/new-page.html	GET
-2024-07-22	15:23:37	35e7ddfe-a1a3-4ecf-8798-1f27c47b619e	/img/img.jpg	GET
-2024-07-22	15:23:37	29964230-218e-4751-b4ff-58963f0da741	/favicon.ico	GET
-2024-07-22	15:25:09	24762e50-01e8-4511-953e-f9ff930b770a	/new-page.html	GET
-2024-07-22	15:25:10	8d8b9155-7b0e-4e2d-b47c-4ebda1055240	/img/img.jpg	GET
-2024-07-22	15:25:49	c5a68610-f3ba-485e-a5f0-23cc89c2375a	/index	GET
+2024-07-22	22:48:40	e40774a7-0b32-4432-b0de-510bd94c23e0	GET	undefined	/
+2024-07-22	22:48:40	a13b041e-6616-43c4-abac-3c4179f44611	GET	undefined	/css/style.css
+2024-07-22	23:58:17	ed66eb73-9496-4f76-9f3f-61fa8baba1ed	GET	undefined	/
+2024-07-22	23:58:17	f07687a1-2609-4723-9b6c-0149dfec3c0a	GET	undefined	/css/style.css
+2024-07-22	23:58:18	22e25d01-4ba8-4858-bb5b-6f790e2ebdad	GET	undefined	/favicon.ico
+2024-07-23	00:15:18	0e7913a2-faf4-438c-973c-cbbc6fc84c1c	GET	undefined	/old-page.html
+2024-07-23	00:15:18	064f6d0e-7299-416f-a771-2f435c213729	GET	undefined	/new-page.html
+2024-07-23	00:15:18	af6341ba-ba57-4839-9328-d86d59147bbb	GET	undefined	/img/img.jpg
+2024-07-23	00:15:18	385cc286-50a7-4080-a4d9-f929d9d3b805	GET	undefined	/css/style.css
+2024-07-23	00:22:59	2b028366-8750-48d3-9e99-97fe9bd5d90f	OPTIONS	https://www.google.com	/new-page.html
+2024-07-23	00:22:59	912f5722-b539-44a5-a599-628618d618cc	GET	https://www.google.com	/new-page.html
+2024-07-23	00:44:09	0f79b935-9265-4de6-90d0-1ee53c867085	OPTIONS	https://www.google.com	/new-page.html
+2024-07-23	00:44:09	541dc6d2-9ec6-401a-aaac-6e32b275ac0f	GET	https://www.google.com	/new-page.html
+2024-07-23	00:44:24	171c2cd3-1f67-468a-b12f-e63c6911c6a7	OPTIONS	https://www.google.com	/
+2024-07-23	00:44:24	c989e01e-b21a-4e32-b025-df5ce2947ea6	GET	https://www.google.com	/
+2024-07-29	01:29:37	1875e264-9087-4b13-9a06-042dbfdb5cc9	OPTIONS	https://www.google.com	/
+2024-07-29	01:29:37	21fb1b29-f9a8-4f88-8ea2-afcb87da8838	GET	https://www.google.com	/
+2024-07-29	01:34:03	82ff8df1-1576-4ee8-a85b-515575d20274	GET	undefined	/
